@@ -1,0 +1,27 @@
+[general]
+name=CDSE Plugin
+qgisMinimumVersion=3.22
+description=Search, visualize, and download satellite data from Copernicus Data Space Ecosystem (CDSE)
+version=0.1.0
+author=Qiusheng Wu
+email=giswqs@gmail.com
+about=A QGIS plugin for accessing Copernicus Data Space Ecosystem (CDSE) satellite imagery. Features include:
+    - Search Sentinel-1/2/3/5P/6, Copernicus DEM, and Landsat data
+    - Support for both STAC and OData APIs
+    - Interactive footprint visualization
+    - Batch download capabilities
+    - Cloud cover filtering for optical data
+tracker=https://github.com/opengeos/qgis-cdse-plugin/issues
+repository=https://github.com/opengeos/qgis-cdse-plugin
+tags=copernicus,sentinel,satellite,remote sensing,earth observation,stac,odata,download
+homepage=https://github.com/opengeos/qgis-cdse-plugin
+category=Web
+icon=icons/icon.svg
+experimental=True
+deprecated=False
+changelog=
+    0.1.0 - Initial release
+        - STAC and OData API support
+        - Search and download functionality
+        - Footprint visualization
+        - Cloud cover filtering
