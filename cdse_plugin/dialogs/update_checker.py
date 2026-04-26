@@ -27,8 +27,11 @@ try:
         QTextEdit,
         QVBoxLayout,
     )
-except ImportError:
-    pass
+except ImportError as e:
+    raise ImportError(
+        "cdse_plugin.dialogs.update_checker requires the QGIS/PyQt runtime "
+        "and could not import required Qt classes."
+    ) from e
 
 try:
     from qgis.core import Qgis, QgsMessageLog
