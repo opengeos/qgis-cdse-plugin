@@ -27,14 +27,44 @@ try:
         QTextEdit,
         QVBoxLayout,
     )
+except ImportError as e:
+    raise ImportError(
+        "cdse_plugin.dialogs.update_checker requires the QGIS/PyQt runtime "
+        "and could not import required Qt classes."
+    ) from e
+
+try:
+    from qgis.core import Qgis, QgsMessageLog
 except ImportError:
-    pass
+    Qgis = None
+    QgsMessageLog = None
 
 from ..utils.config import GITHUB_BRANCH, GITHUB_REPO, PLUGIN_PATH
 
 # GitHub URLs for the plugin
 METADATA_URL = f"https://raw.githubusercontent.com/{GITHUB_REPO}/{GITHUB_BRANCH}/{PLUGIN_PATH}/metadata.txt"
 ZIP_URL = f"https://github.com/{GITHUB_REPO}/archive/refs/heads/{GITHUB_BRANCH}.zip"
+
+
+def _require_https(url: str) -> str:
+    """Ensure a URL uses the https scheme before opening it.
+
+    Guards against tampering with the GITHUB_* config constants that could
+    swap in file:// or another scheme, which would otherwise be accepted by
+    urlopen/urlretrieve.
+
+    Args:
+        url: The URL to validate.
+
+    Returns:
+        The same URL, unchanged.
+
+    Raises:
+        ValueError: If the URL does not start with ``https://``.
+    """
+    if not url.startswith("https://"):
+        raise ValueError(f"Refusing to open non-https URL: {url!r}")
+    return url
 
 
 class VersionCheckWorker(QThread):
@@ -51,7 +81,10 @@ class VersionCheckWorker(QThread):
     def run(self) -> None:
         """Fetch the latest metadata from GitHub."""
         try:
-            with urlopen(METADATA_URL, timeout=15) as response:
+            # https-only via _require_https; safe to open.
+            with urlopen(
+                _require_https(METADATA_URL), timeout=15
+            ) as response:  # nosec B310
                 content = response.read().decode("utf-8")
 
             # Parse version from metadata
@@ -124,7 +157,8 @@ class DownloadWorker(QThread):
                     percent = min(int((downloaded / total_size) * 50), 50)
                     self.progress.emit(10 + percent, "Downloading...")
 
-            urlretrieve(ZIP_URL, zip_path, reporthook)
+            # https-only via _require_https; safe to open.
+            urlretrieve(_require_https(ZIP_URL), zip_path, reporthook)  # nosec B310
 
             self.progress.emit(60, "Extracting files...")
 
@@ -259,7 +293,7 @@ class UpdateCheckerDialog(QDialog):
         header_font.setPointSize(14)
         header_font.setBold(True)
         header_label.setFont(header_font)
-        header_label.setAlignment(Qt.AlignCenter)
+        header_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(header_label)
 
         # Version info group
@@ -304,7 +338,7 @@ class UpdateCheckerDialog(QDialog):
         # Progress label
         self.progress_label = QLabel("")
         self.progress_label.setVisible(False)
-        self.progress_label.setAlignment(Qt.AlignCenter)
+        self.progress_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.progress_label)
 
         # Buttons
@@ -333,7 +367,7 @@ class UpdateCheckerDialog(QDialog):
         )
         info_label.setWordWrap(True)
         info_label.setOpenExternalLinks(True)
-        info_label.setAlignment(Qt.AlignCenter)
+        info_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(info_label)
 
     def check_for_updates(self) -> None:
@@ -440,11 +474,11 @@ class UpdateCheckerDialog(QDialog):
             f"This will download and install version {self.latest_version}.\n\n"
             "IMPORTANT: You will need to restart QGIS after the update completes.\n\n"
             "Do you want to continue?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
         )
 
-        if reply != QMessageBox.Yes:
+        if reply != QMessageBox.StandardButton.Yes:
             return
 
         self.check_btn.setEnabled(False)
@@ -542,10 +576,10 @@ class UpdateCheckerDialog(QDialog):
                 self,
                 "Download in Progress",
                 "A download is in progress. Are you sure you want to cancel?",
-                QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
             )
-            if reply != QMessageBox.Yes:
+            if reply != QMessageBox.StandardButton.Yes:
                 event.ignore()
                 return
             self.download_worker.terminate()
@@ -627,13 +661,18 @@ def _silent_check(parent=None) -> None:
                     f"A new version of CDSE Plugin ({latest}) is available.\n"
                     f"You are currently running version {current_version}.\n\n"
                     "Would you like to open the update dialog?",
-                    QMessageBox.Yes | QMessageBox.No,
-                    QMessageBox.No,
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                    QMessageBox.StandardButton.No,
                 )
-                if reply == QMessageBox.Yes:
+                if reply == QMessageBox.StandardButton.Yes:
                     show_update_dialog(parent)
-        except Exception:
-            pass
+        except Exception as exc:
+            if QgsMessageLog is not None and Qgis is not None:
+                QgsMessageLog.logMessage(
+                    f"CDSE Plugin update check failed: {exc}",
+                    "CDSE Plugin",
+                    Qgis.MessageLevel.Warning,
+                )
 
     worker.finished.connect(on_finished)
     worker.start()
@@ -651,4 +690,4 @@ def show_update_dialog(parent=None) -> None:
     """
     plugin_dir = get_plugin_dir()
     dialog = UpdateCheckerDialog(plugin_dir, parent)
-    dialog.exec_()
+    dialog.exec()

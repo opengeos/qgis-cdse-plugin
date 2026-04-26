@@ -77,7 +77,9 @@ class SearchDock(QDockWidget):
 
     def _setup_ui(self) -> None:
         """Set up the dock UI."""
-        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.setAllowedAreas(
+            Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea
+        )
 
         main_widget = QWidget()
         layout = QVBoxLayout(main_widget)
@@ -164,7 +166,7 @@ class SearchDock(QDockWidget):
 
         slider_layout = QHBoxLayout()
 
-        self.cloud_slider = QSlider(Qt.Horizontal)
+        self.cloud_slider = QSlider(Qt.Orientation.Horizontal)
         self.cloud_slider.setMinimum(0)
         self.cloud_slider.setMaximum(100)
         self.cloud_slider.setValue(DEFAULT_CLOUD_COVER)

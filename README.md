@@ -77,7 +77,7 @@ To download products, you need a CDSE account:
 
 ## Requirements
 
-- QGIS 3.22 or later
+- QGIS 3.22 or later (including QGIS 4.0+)
 - Python 3.8+
 - requests >= 2.28.0
 

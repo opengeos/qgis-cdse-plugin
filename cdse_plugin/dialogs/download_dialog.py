@@ -68,7 +68,7 @@ class DownloadDialog(QDialog):
         self.resize(750, 550)
         # Make dialog non-modal so QGIS remains usable during downloads
         self.setModal(False)
-        self.setAttribute(Qt.WA_DeleteOnClose, False)
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose, False)
 
         layout = QVBoxLayout(self)
 
@@ -92,7 +92,7 @@ class DownloadDialog(QDialog):
         self.table.setHorizontalHeaderLabels(
             ["Name", "Size", "Status", "Progress", "URL"]
         )
-        self.table.setSelectionMode(QTableWidget.NoSelection)
+        self.table.setSelectionMode(QTableWidget.SelectionMode.NoSelection)
         self.table.setColumnHidden(4, True)  # Hide URL column
 
         # Populate table

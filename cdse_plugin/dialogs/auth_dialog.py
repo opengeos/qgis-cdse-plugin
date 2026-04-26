@@ -1,29 +1,16 @@
 """Authentication dialog for CDSE Plugin."""
 
-try:
-    from qgis.PyQt.QtCore import Qt
-    from qgis.PyQt.QtWidgets import (
-        QDialog,
-        QDialogButtonBox,
-        QFormLayout,
-        QLabel,
-        QLineEdit,
-        QMessageBox,
-        QPushButton,
-        QVBoxLayout,
-    )
-except ImportError:
-    from PyQt5.QtCore import Qt
-    from PyQt5.QtWidgets import (
-        QDialog,
-        QDialogButtonBox,
-        QFormLayout,
-        QLabel,
-        QLineEdit,
-        QMessageBox,
-        QPushButton,
-        QVBoxLayout,
-    )
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import (
+    QDialog,
+    QDialogButtonBox,
+    QFormLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+)
 
 from ..api.auth import AuthManager
 
@@ -73,7 +60,7 @@ class AuthDialog(QDialog):
         form_layout.addRow("Username:", self.username_edit)
 
         self.password_edit = QLineEdit()
-        self.password_edit.setEchoMode(QLineEdit.Password)
+        self.password_edit.setEchoMode(QLineEdit.EchoMode.Password)
         self.password_edit.setPlaceholderText("Password")
         form_layout.addRow("Password:", self.password_edit)
 
@@ -89,11 +76,11 @@ class AuthDialog(QDialog):
 
         self.login_button = QPushButton("Login")
         self.login_button.clicked.connect(self._on_login)
-        button_box.addButton(self.login_button, QDialogButtonBox.AcceptRole)
+        button_box.addButton(self.login_button, QDialogButtonBox.ButtonRole.AcceptRole)
 
         self.cancel_button = QPushButton("Cancel")
         self.cancel_button.clicked.connect(self.reject)
-        button_box.addButton(self.cancel_button, QDialogButtonBox.RejectRole)
+        button_box.addButton(self.cancel_button, QDialogButtonBox.ButtonRole.RejectRole)
 
         layout.addWidget(button_box)
 
@@ -180,7 +167,9 @@ class LogoutConfirmDialog(QDialog):
         label.setWordWrap(True)
         layout.addWidget(label)
 
-        button_box = QDialogButtonBox(QDialogButtonBox.Yes | QDialogButtonBox.No)
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Yes | QDialogButtonBox.StandardButton.No
+        )
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
         layout.addWidget(button_box)

@@ -13,11 +13,11 @@ except ImportError:
 
 from ..utils.config import TOKEN_URL
 
-# Environment variable names
+# Environment variable names (these are variable names, not secret values).
 ENV_CLIENT_ID = "CDSE_CLIENT_ID"
-ENV_CLIENT_SECRET = "CDSE_CLIENT_SECRET"
+ENV_CLIENT_SECRET = "CDSE_CLIENT_SECRET"  # nosec B105
 ENV_AWS_ACCESS_KEY_ID = "AWS_ACCESS_KEY_ID"
-ENV_AWS_SECRET_ACCESS_KEY = "AWS_SECRET_ACCESS_KEY"
+ENV_AWS_SECRET_ACCESS_KEY = "AWS_SECRET_ACCESS_KEY"  # nosec B105
 
 
 class AuthManager:

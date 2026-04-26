@@ -4,12 +4,8 @@ from typing import Optional
 
 import requests
 
-try:
-    from qgis.PyQt.QtCore import QThread, pyqtSignal
-    from qgis.PyQt.QtGui import QPixmap
-except ImportError:
-    from PyQt5.QtCore import QThread, pyqtSignal
-    from PyQt5.QtGui import QPixmap
+from qgis.PyQt.QtCore import QThread, pyqtSignal
+from qgis.PyQt.QtGui import QPixmap
 
 
 class ThumbnailWorker(QThread):

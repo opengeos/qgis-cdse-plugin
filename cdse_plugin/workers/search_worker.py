@@ -2,10 +2,7 @@
 
 from typing import TYPE_CHECKING, List, Optional
 
-try:
-    from qgis.PyQt.QtCore import QThread, pyqtSignal
-except ImportError:
-    from PyQt5.QtCore import QThread, pyqtSignal
+from qgis.PyQt.QtCore import QThread, pyqtSignal
 
 if TYPE_CHECKING:
     from ..api.models import SearchParameters, SearchResult
