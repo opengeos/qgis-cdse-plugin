@@ -1,8 +1,9 @@
 [general]
 name=CDSE Plugin
 qgisMinimumVersion=3.22
+qgisMaximumVersion=4.99
 description=Search, visualize, and download satellite data from Copernicus Data Space Ecosystem (CDSE)
-version=0.1.0
+version=0.2.0
 author=Qiusheng Wu
 email=giswqs@gmail.com
 about=A QGIS plugin for accessing Copernicus Data Space Ecosystem (CDSE) satellite imagery. Features include:
@@ -20,6 +21,9 @@ icon=icons/icon.svg
 experimental=True
 deprecated=False
 changelog=
+    0.2.0 - QGIS 4 / Qt6 compatibility
+        - Compatible with QGIS 4.0 (Qt6) while keeping QGIS 3.22+ support
+        - Fully-qualified Qt enums and updated exec() calls
     0.1.0 - Initial release
         - STAC and OData API support
         - Search and download functionality

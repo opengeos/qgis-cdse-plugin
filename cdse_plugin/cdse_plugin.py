@@ -203,7 +203,9 @@ class CDSEPlugin:
         self.search_dock.visibilityChanged.connect(
             lambda v: self.action_search.setChecked(v)
         )
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.search_dock)
+        self.iface.addDockWidget(
+            Qt.DockWidgetArea.RightDockWidgetArea, self.search_dock
+        )
 
         # Load collections from API
         self.search_dock.load_collections()
@@ -219,7 +221,9 @@ class CDSEPlugin:
         self.results_dock.details_requested.connect(self._on_details_requested)
         self.results_dock.view_cog_requested.connect(self._on_view_cog_requested)
         self.results_dock.selection_changed.connect(self._on_table_selection_changed)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.results_dock)
+        self.iface.addDockWidget(
+            Qt.DockWidgetArea.RightDockWidgetArea, self.results_dock
+        )
 
     def _create_settings_dock(self) -> None:
         """Create the settings dock widget."""
@@ -227,7 +231,9 @@ class CDSEPlugin:
         self.settings_dock.visibilityChanged.connect(
             lambda v: self.action_settings.setChecked(v)
         )
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.settings_dock)
+        self.iface.addDockWidget(
+            Qt.DockWidgetArea.RightDockWidgetArea, self.settings_dock
+        )
 
     def _on_search_requested(self, params: SearchParameters) -> None:
         """Handle search request.

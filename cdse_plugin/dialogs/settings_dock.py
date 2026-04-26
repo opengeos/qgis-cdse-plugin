@@ -69,7 +69,9 @@ class SettingsDock(QDockWidget):
 
     def _setup_ui(self) -> None:
         """Set up the dock UI."""
-        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.setAllowedAreas(
+            Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea
+        )
 
         main_widget = QWidget()
         layout = QVBoxLayout(main_widget)
@@ -91,7 +93,7 @@ class SettingsDock(QDockWidget):
 
         self.client_secret_edit = QLineEdit()
         self.client_secret_edit.setPlaceholderText("Enter Client Secret")
-        self.client_secret_edit.setEchoMode(QLineEdit.Password)
+        self.client_secret_edit.setEchoMode(QLineEdit.EchoMode.Password)
         oauth_layout.addRow("Client Secret:", self.client_secret_edit)
 
         oauth_btn_layout = QHBoxLayout()
@@ -117,7 +119,7 @@ class SettingsDock(QDockWidget):
 
         self.aws_secret_edit = QLineEdit()
         self.aws_secret_edit.setPlaceholderText("Enter Secret Access Key")
-        self.aws_secret_edit.setEchoMode(QLineEdit.Password)
+        self.aws_secret_edit.setEchoMode(QLineEdit.EchoMode.Password)
         s3_layout.addRow("Secret Access Key:", self.aws_secret_edit)
 
         s3_btn_layout = QHBoxLayout()
@@ -235,7 +237,7 @@ class SettingsDock(QDockWidget):
         footprint_layout.addRow("Color:", color_layout)
 
         opacity_layout = QHBoxLayout()
-        self.opacity_slider = QSlider(Qt.Horizontal)
+        self.opacity_slider = QSlider(Qt.Orientation.Horizontal)
         self.opacity_slider.setMinimum(0)
         self.opacity_slider.setMaximum(100)
         self.opacity_slider.setValue(int(FOOTPRINT_OPACITY * 100))
@@ -468,10 +470,10 @@ class SettingsDock(QDockWidget):
             self,
             "Clear Credentials",
             "Are you sure you want to clear all stored credentials?",
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
 
-        if reply == QMessageBox.Yes:
+        if reply == QMessageBox.StandardButton.Yes:
             self.auth_manager.logout()
             self.client_id_edit.clear()
             self.client_secret_edit.clear()

@@ -5,10 +5,7 @@ from typing import TYPE_CHECKING, Optional
 
 import requests
 
-try:
-    from qgis.PyQt.QtCore import QThread, pyqtSignal
-except ImportError:
-    from PyQt5.QtCore import QThread, pyqtSignal
+from qgis.PyQt.QtCore import QThread, pyqtSignal
 
 if TYPE_CHECKING:
     from ..api.auth import AuthManager

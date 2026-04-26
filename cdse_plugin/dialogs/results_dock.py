@@ -79,7 +79,9 @@ class ResultsDock(QDockWidget):
 
     def _setup_ui(self) -> None:
         """Set up the dock UI."""
-        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.setAllowedAreas(
+            Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea
+        )
 
         main_widget = QWidget()
         layout = QVBoxLayout(main_widget)
@@ -90,9 +92,9 @@ class ResultsDock(QDockWidget):
         self.table.setHorizontalHeaderLabels(
             ["", "Name", "Date", "Cloud %", "Size (MB)", "Collection"]
         )
-        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.table.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.table.customContextMenuRequested.connect(self._show_context_menu)
         self.table.doubleClicked.connect(self._on_double_click)
 
@@ -105,13 +107,13 @@ class ResultsDock(QDockWidget):
 
         # Set column widths
         header = self.table.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.Fixed)
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
         self.table.setColumnWidth(0, THUMBNAIL_SIZE + 8)
-        header.setSectionResizeMode(1, QHeaderView.Stretch)
-        header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
-        header.setSectionResizeMode(5, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents)
+        header.setSectionResizeMode(5, QHeaderView.ResizeMode.ResizeToContents)
 
         layout.addWidget(self.table)
 
@@ -171,14 +173,14 @@ class ResultsDock(QDockWidget):
         for row, result in enumerate(self._results):
             # Thumbnail placeholder - store result ID for mapping
             thumb_item = QTableWidgetItem()
-            thumb_item.setData(Qt.UserRole, result.id)
+            thumb_item.setData(Qt.ItemDataRole.UserRole, result.id)
             self.table.setItem(row, 0, thumb_item)
             self.table.setRowHeight(row, THUMBNAIL_SIZE + 8)
 
             # Name
             name_item = QTableWidgetItem(result.name)
             name_item.setToolTip(result.name)
-            name_item.setData(Qt.UserRole, result.id)
+            name_item.setData(Qt.ItemDataRole.UserRole, result.id)
             self.table.setItem(row, 1, name_item)
 
             # Date
@@ -186,26 +188,26 @@ class ResultsDock(QDockWidget):
             if result.datetime:
                 date_str = result.datetime.strftime("%Y-%m-%d %H:%M")
             date_item = QTableWidgetItem(date_str)
-            date_item.setData(Qt.UserRole, result.id)
+            date_item.setData(Qt.ItemDataRole.UserRole, result.id)
             self.table.setItem(row, 2, date_item)
 
             # Cloud cover - use numeric sorting
             cloud_item = NumericTableWidgetItem()
             if result.cloud_cover is not None:
                 cloud_item.setText(f"{result.cloud_cover:.1f}")
-            cloud_item.setData(Qt.UserRole, result.id)
+            cloud_item.setData(Qt.ItemDataRole.UserRole, result.id)
             self.table.setItem(row, 3, cloud_item)
 
             # Size - use numeric sorting
             size_item = NumericTableWidgetItem()
             if result.size_mb is not None:
                 size_item.setText(f"{result.size_mb:.1f}")
-            size_item.setData(Qt.UserRole, result.id)
+            size_item.setData(Qt.ItemDataRole.UserRole, result.id)
             self.table.setItem(row, 4, size_item)
 
             # Collection
             collection_item = QTableWidgetItem(result.collection)
-            collection_item.setData(Qt.UserRole, result.id)
+            collection_item.setData(Qt.ItemDataRole.UserRole, result.id)
             self.table.setItem(row, 5, collection_item)
 
         # Re-enable sorting
@@ -223,7 +225,7 @@ class ResultsDock(QDockWidget):
         # Find row and update
         for row in range(self.table.rowCount()):
             item = self.table.item(row, 0)
-            if item and item.data(Qt.UserRole) == item_id:
+            if item and item.data(Qt.ItemDataRole.UserRole) == item_id:
                 item.setIcon(QIcon(pixmap))
                 break
 
@@ -275,7 +277,7 @@ class ResultsDock(QDockWidget):
         for row in selected_rows:
             item = self.table.item(row, 0)
             if item:
-                result_id = item.data(Qt.UserRole)
+                result_id = item.data(Qt.ItemDataRole.UserRole)
                 if result_id:
                     selected_ids.append(result_id)
         self.selection_changed.emit(selected_ids)
@@ -371,7 +373,7 @@ class ResultsDock(QDockWidget):
         details_action.triggered.connect(lambda: self.details_requested.emit(result))
         menu.addAction(details_action)
 
-        menu.exec_(self.table.mapToGlobal(position))
+        menu.exec(self.table.mapToGlobal(position))
 
     def get_thumbnail_requests(self) -> List[tuple]:
         """Get list of thumbnail requests for results without thumbnails.
@@ -400,7 +402,7 @@ class ResultsDock(QDockWidget):
         for row in range(self.table.rowCount()):
             item = self.table.item(row, 0)
             if item:
-                result_id = item.data(Qt.UserRole)
+                result_id = item.data(Qt.ItemDataRole.UserRole)
                 if result_id in result_ids:
                     self.table.selectRow(row)
 

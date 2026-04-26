@@ -101,7 +101,7 @@ class COGViewerDialog(QDialog):
 
         # Asset list
         self.asset_list = QListWidget()
-        self.asset_list.setSelectionMode(QListWidget.MultiSelection)
+        self.asset_list.setSelectionMode(QListWidget.SelectionMode.MultiSelection)
         layout.addWidget(self.asset_list)
 
         # Populate asset list
@@ -159,7 +159,10 @@ class COGViewerDialog(QDialog):
                 size_str = f" ({size_mb:.1f} MB)"
 
             item = QListWidgetItem(f"{name}{size_str}")
-            item.setData(Qt.UserRole, {"name": name, "asset": asset, "url": https_url})
+            item.setData(
+                Qt.ItemDataRole.UserRole,
+                {"name": name, "asset": asset, "url": https_url},
+            )
             item.setToolTip(https_url)
             self.asset_list.addItem(item)
 
@@ -221,7 +224,7 @@ class COGViewerDialog(QDialog):
 
         added = 0
         for item in selected_items:
-            data = item.data(Qt.UserRole)
+            data = item.data(Qt.ItemDataRole.UserRole)
             if data:
                 name = data["name"]
                 asset = data["asset"]
@@ -370,4 +373,4 @@ def show_cog_viewer(
         return
 
     dialog = COGViewerDialog(result, auth_manager, parent)
-    dialog.exec_()
+    dialog.exec()
